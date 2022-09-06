@@ -46,7 +46,7 @@ describe('GET requests', () => {
             .get(`/api/reviews/${reviewId}`)
             .expect(200)
             .then((res) => {                            
-            expect(res.body.reviews).toHaveProperty('review_id', expect.any(Number))
+            expect(res.body.reviews).toHaveProperty('review_id', 10)
             expect(res.body.reviews).toHaveProperty('title', expect.any(String))
             expect(res.body.reviews).toHaveProperty('designer', expect.any(String))
             expect(res.body.reviews).toHaveProperty('owner', expect.any(String))
