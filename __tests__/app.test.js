@@ -47,14 +47,14 @@ describe('GET requests', () => {
             .expect(200)
             .then((res) => {                            
             expect(res.body.reviews).toHaveProperty('review_id', 10)
-            expect(res.body.reviews).toHaveProperty('title', expect.any(String))
-            expect(res.body.reviews).toHaveProperty('designer', expect.any(String))
-            expect(res.body.reviews).toHaveProperty('owner', expect.any(String))
-            expect(res.body.reviews).toHaveProperty('review_img_url', expect.any(String))
-            expect(res.body.reviews).toHaveProperty('review_body', expect.any(String))
-            expect(res.body.reviews).toHaveProperty( 'category', expect.any(String))
-            expect(res.body.reviews).toHaveProperty( 'created_at', expect.any(String))
-            expect(res.body.reviews).toHaveProperty( 'votes', expect.any(Number))            
+            expect(res.body.reviews).toHaveProperty('title', 'Build you own tour de Yorkshire')
+            expect(res.body.reviews).toHaveProperty('designer', 'Asger Harding Granerud')
+            expect(res.body.reviews).toHaveProperty('owner', 'mallionaire')
+            expect(res.body.reviews).toHaveProperty('review_img_url', 'https://images.pexels.com/photos/258045/pexels-photo-258045.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260')
+            expect(res.body.reviews).toHaveProperty('review_body', 'Cold rain pours on the faces of your team of cyclists, you pulled to the front of the pack early and now your taking on exhaustion cards like there is not tomorrow, you think there are about 2 hands left until you cross the finish line, will you draw enough from your deck to cross before the other team shoot passed? Flamee Rouge is a Racing deck management game where you carefully manage your deck in order to cross the line before your opponents, cyclist can fall slyly behind front runners in their slipstreams to save precious energy for the prefect moment to burst into the lead ')
+            expect(res.body.reviews).toHaveProperty( 'category', 'social deduction')
+            expect(res.body.reviews).toHaveProperty( 'created_at', '2021-01-18T10:01:41.251Z')
+            expect(res.body.reviews).toHaveProperty( 'votes', 10)            
         })
     });
         it('should respond with a status 400 : bad request', () => {
