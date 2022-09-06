@@ -14,7 +14,7 @@ afterAll(() => {
 
 
 
-describe.only('GET requests', () => {
+describe('GET requests', () => {
     describe('GET /api/categories', () => {
         it('should respond with a status 200 and an array of category objects', () => {
             return request(app)
