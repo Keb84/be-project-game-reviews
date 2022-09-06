@@ -21,3 +21,9 @@ exports.reviewsById = (review_id) => {
     })
 }
 
+exports.allUsers = () => {
+    return db.query('SELECT * FROM users').then((result) => {
+        
+        return result.rows
+    })
+}
