@@ -77,6 +77,33 @@ describe('GET requests', () => {
         });
 })
 })
+    describe('GET /api/users', () => {
+        it('should respond with a status 200 and an array of user objects', () => {
+            return request(app)
+            .get('/api/users')
+            .expect(200)
+            .then((res) => {
+                const users = res.body.users
+
+                expect(Array.isArray(users)).toBe(true)
+                expect(users.length > 0).toBe(true)
+                users.forEach((users) => {
+                    expect(users).toHaveProperty('username', expect.any(String))
+                    expect(users).toHaveProperty('name', expect.any(String))
+                    expect(users).toHaveProperty('avatar_url', expect.any(String))
+                })
+
+            })
+        })
+        it('should respond with status 404 : path not found when passed an incorrect path ', () => {
+            return request(app)
+            .get('/api/users123')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toBe('Path not found!')
+            })
+        });
+    })
 })
                
                 
