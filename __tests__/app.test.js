@@ -39,5 +39,49 @@ describe('GET requests', () => {
                 expect(body.msg).toBe('Path not found!')
             })
         });
-    })
+    describe('GET /api/reviews/:review_id', () => {
+        it('should respond with a status 200 and a review object', () => {
+            const reviewId = 10
+            return request(app)
+            .get(`/api/reviews/${reviewId}`)
+            .expect(200)
+            .then((res) => {                            
+            expect(res.body.reviews).toHaveProperty('review_id', expect.any(Number))
+            expect(res.body.reviews).toHaveProperty('title', expect.any(String))
+            expect(res.body.reviews).toHaveProperty('designer', expect.any(String))
+            expect(res.body.reviews).toHaveProperty('owner', expect.any(String))
+            expect(res.body.reviews).toHaveProperty('review_img_url', expect.any(String))
+            expect(res.body.reviews).toHaveProperty('review_body', expect.any(String))
+            expect(res.body.reviews).toHaveProperty( 'category', expect.any(String))
+            expect(res.body.reviews).toHaveProperty( 'created_at', expect.any(String))
+            expect(res.body.reviews).toHaveProperty( 'votes', expect.any(Number))            
+        })
+    });
+        it('should respond with a status 400 : bad request', () => {
+            const reviewId = 'banana'
+            return request(app)
+            .get(`/api/reviews/${reviewId}`)
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('Bad request')
+            })
+        });
+        it('responds with a custom 404 status if thevrequest was good but the review_id doesn"t exist', () => {
+            const reviewId = '20'
+            return request(app)
+            .get(`/api/reviews/${reviewId}`)
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toBe('review Id not found')
+            })
+        });
 })
+})
+})
+               
+                
+            
+            
+              
+                
+                
