@@ -39,6 +39,7 @@ describe('GET requests', () => {
                 expect(body.msg).toBe('Path not found!')
             })
         });
+    })
     describe('GET /api/reviews/:review_id', () => {
         it('should respond with a status 200 and a review object', () => {
             const reviewId = 10
@@ -66,7 +67,7 @@ describe('GET requests', () => {
                 expect(body.msg).toBe('Bad request')
             })
         });
-        it('responds with a custom 404 status if thevrequest was good but the review_id doesn"t exist', () => {
+        it('responds with a custom 404 status if the request was good but the review_id doesn"t exist', () => {
             const reviewId = '20'
             return request(app)
             .get(`/api/reviews/${reviewId}`)
@@ -75,8 +76,7 @@ describe('GET requests', () => {
                 expect(body.msg).toBe('review Id not found')
             })
         });
-})
-})
+    })
     describe('GET /api/users', () => {
         it('should respond with a status 200 and an array of user objects', () => {
             return request(app)
@@ -101,6 +101,82 @@ describe('GET requests', () => {
             .expect(404)
             .then(({body}) => {
                 expect(body.msg).toBe('Path not found!')
+            })
+        });
+    })
+})
+
+describe('PATCH request', () => {
+    describe('PATCH /api/reviews/:review_id', () => {
+        it('should respond with a status 200 and the updated review object ', () => {
+            const reviewUpdate = {
+                inc_votes : 10
+            }
+            return request(app)
+            .patch('/api/reviews/1')
+            .send(reviewUpdate)
+            .expect(200)
+            .then(({body}) => {
+                expect(body.review).toEqual({
+                    review_id: 1,
+                    title: 'Agricola',
+                    designer: 'Uwe Rosenberg',
+                    owner: 'mallionaire',
+                    review_img_url:
+                    'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+                    review_body: 'Farmyard fun!',
+                    category: 'euro game',
+                    created_at: '2021-01-18T10:00:20.514Z',
+                    votes: 11
+            
+                })
+            })
+        })
+        it('should respond with status 404 : path not found when passed an incorrect path', () => {
+            return request(app)
+            .patch('/api/reviews123/3')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toBe('Path not found!')
+            })
+        });
+        it('should respond with status 400 : bad request when passed an incorrect reviewId', () => {
+            return request(app)
+            .patch('/api/reviews/banana')
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('Bad request')
+            })
+        });
+        it('responds with a custom 404 status if the request was good but the review_id doesn"t exist', () => {
+            const reviewId = '20'
+            return request(app)
+            .patch(`/api/reviews/${reviewId}`)
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toBe('review Id not found')
+            })
+        });
+        it('should respond with status 400 : bad request when the request body is empty', () => {
+            const reviewUpdate = { }
+            return request(app)
+            .patch('/api/reviews/1')
+            .send(reviewUpdate)
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('Bad request')
+            })
+        });
+        it('should respond with a 400: bad request when the request body has an invalid value ', () => {
+            const reviewUpdate = {
+                inc_votes : "cat"
+            }
+            return request(app)
+            .patch('/api/reviews/1')
+            .send(reviewUpdate)
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('Bad request')
             })
         });
     })
