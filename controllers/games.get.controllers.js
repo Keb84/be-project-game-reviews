@@ -13,7 +13,6 @@ const getCategories = (req, res, next) => {
 
 const getReviewsById = (req, res, next) => {
     const reviewId = req.params.review_id
-
         reviewsById(reviewId).then((reviews) => {
         res.status(200).send({reviews})
     })
