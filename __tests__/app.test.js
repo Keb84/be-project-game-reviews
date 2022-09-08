@@ -42,20 +42,21 @@ describe('GET requests', () => {
     })
     describe('GET /api/reviews/:review_id', () => {
         it('should respond with a status 200 and a review object', () => {
-            const reviewId = 10
+            const reviewId = 2
             return request(app)
             .get(`/api/reviews/${reviewId}`)
             .expect(200)
             .then((res) => {                            
-            expect(res.body.reviews).toHaveProperty('review_id', 10)
-            expect(res.body.reviews).toHaveProperty('title', 'Build you own tour de Yorkshire')
-            expect(res.body.reviews).toHaveProperty('designer', 'Asger Harding Granerud')
-            expect(res.body.reviews).toHaveProperty('owner', 'mallionaire')
-            expect(res.body.reviews).toHaveProperty('review_img_url', 'https://images.pexels.com/photos/258045/pexels-photo-258045.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260')
-            expect(res.body.reviews).toHaveProperty('review_body', 'Cold rain pours on the faces of your team of cyclists, you pulled to the front of the pack early and now your taking on exhaustion cards like there is not tomorrow, you think there are about 2 hands left until you cross the finish line, will you draw enough from your deck to cross before the other team shoot passed? Flamee Rouge is a Racing deck management game where you carefully manage your deck in order to cross the line before your opponents, cyclist can fall slyly behind front runners in their slipstreams to save precious energy for the prefect moment to burst into the lead ')
-            expect(res.body.reviews).toHaveProperty( 'category', 'social deduction')
-            expect(res.body.reviews).toHaveProperty( 'created_at', '2021-01-18T10:01:41.251Z')
-            expect(res.body.reviews).toHaveProperty( 'votes', 10)            
+            expect(res.body.reviews).toHaveProperty('review_id', 2)
+            expect(res.body.reviews).toHaveProperty('title', 'Jenga')
+            expect(res.body.reviews).toHaveProperty('designer', 'Leslie Scott')
+            expect(res.body.reviews).toHaveProperty('owner', 'philippaclaire9')
+            expect(res.body.reviews).toHaveProperty('review_img_url','https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png')
+            expect(res.body.reviews).toHaveProperty('review_body', 'Fiddly fun for all the family')
+            expect(res.body.reviews).toHaveProperty( 'category', 'dexterity')
+            expect(res.body.reviews).toHaveProperty( 'created_at',  '2021-01-18T10:01:41.251Z')
+            expect(res.body.reviews).toHaveProperty( 'votes', 5)  
+            expect(res.body.reviews).toHaveProperty('comment_count', 3)          
         })
     });
         it('should respond with a status 400 : bad request', () => {
@@ -101,6 +102,28 @@ describe('GET requests', () => {
             .expect(404)
             .then(({body}) => {
                 expect(body.msg).toBe('Path not found!')
+            })
+        });
+    })
+    describe('GET /api/reviews/:review_id', () => {
+        it('should respond with 200 and a response object that contains a comment_count key', () => {
+            return request(app)
+            .get('/api/reviews/3')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.reviews).toEqual({
+                    review_id: 3,
+                    title: 'Ultimate Werewolf',
+                    designer: 'Akihisa Okui',
+                    owner: 'bainesface',
+                    review_img_url:
+                    'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+                    review_body: "We couldn't find the werewolf!",
+                    category: 'social deduction',
+                    created_at: '2021-01-18T10:01:41.251Z',
+                    votes: 5,
+                    comment_count : 3
+                })
             })
         });
     })
