@@ -13,6 +13,7 @@ app.get('/api/categories', getCategories)
 app.get('/api/reviews/:review_id', getReviewsById)
 app.get('/api/users', getUsers)
 app.get('/api/reviews', getAllReviews)
+
 app.patch('/api/reviews/:review_id', patchReviewById)
 
 app.all('*', (req, res, next) => {

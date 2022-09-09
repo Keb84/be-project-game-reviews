@@ -134,8 +134,23 @@ describe('GET requests', () => {
             .expect(200)
             .then(({body}) => {
                 expect(body.reviews).toBeSortedBy('created_at', {descending:true})
+                expect(body.reviews.length > 0).toBe(true)
+                body.reviews.forEach((review) => {
+                    expect(review).toHaveProperty('review_id',expect.any(Number))
+                    expect(review).toHaveProperty('title',expect.any(String))
+                    expect(review).toHaveProperty('designer',expect.any(String))
+                    expect(review).toHaveProperty('owner',expect.any(String))
+                    expect(review).toHaveProperty('review_img_url',expect.any(String))
+                    expect(review).toHaveProperty('category',expect.any(String))
+                    expect(review).toHaveProperty('created_at',expect.any(String))
+                    expect(review).toHaveProperty('votes',expect.any(Number))
+                    expect(review).toHaveProperty('comment_count',expect.any(Number))
+                })
             })            
         });
+                  
+
+                    
         it('should respond with 200 and a response object filtered by a passed category query', () => {
             return request(app)
             .get('/api/reviews?category=dexterity')
@@ -143,19 +158,29 @@ describe('GET requests', () => {
             .then(({body}) => {
                 expect(body.reviews.length).toBe(1)
                 expect(body.reviews.every(review => review.category === 'dexterity')).toBe(true)
+                expect()
 
             })
         });
-        it('should respond with a custom 400 status if the request was good but the category doesn"t exist', () => {
+        it('should respond with a custom 404 status if the request was good but the category doesn"t exist', () => {
             return request(app)
             .get('/api/reviews?category=bananas')
-            .expect(400)
+            .expect(404)
             .then(({body}) => {
-                expect(body.msg).toBe('Oops that category doesn"t exist')
+                expect(body.msg).toBe('Oops that category can"t be found')
             })
         });
-        
+        it('respond with 200 and an empty array when the category is valid but there are no instances of it', () => {
+            return request(app)
+            .get("/api/reviews?category=children's+games")
+            .expect(200)
+            .then(({body}) => {
+                expect(body.reviews).toEqual([])
+            })
+        });
+
     })
+    
 })
 
 describe('PATCH request', () => {
@@ -233,6 +258,7 @@ describe('PATCH request', () => {
         });
     })
 })
+            
                
                 
             
