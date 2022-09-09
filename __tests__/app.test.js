@@ -156,6 +156,51 @@ describe('GET requests', () => {
         });
         
     })
+    describe('GET /api/reviews/:review_id/comments', () => {
+        it('should respond with 200 and an array of comment objects ', () => {
+            return request(app)
+            .get('/api/reviews/3/comments')
+            .expect(200)
+            .then((res) => {
+                const comments = res.body.comments
+                
+                expect(Array.isArray(comments)).toBe(true)
+                expect(comments.length).toBe(3)
+                comments.forEach((comment) => {
+                    expect(comment).toHaveProperty('comment_id',expect.any(Number))
+                    expect(comment).toHaveProperty('votes', expect.any(Number))
+                    expect(comment).toHaveProperty('created_at', expect.any(String))
+                    expect(comment).toHaveProperty('author', expect.any(String))
+                    expect(comment).toHaveProperty('body', expect.any(String))
+                    expect(comment).toHaveProperty('review_id', expect.any(Number))
+                                       
+                })
+
+            })
+        });
+        it('should respond with status 400 : bad request', () => {
+            const reviewId = 'banana'
+            return request(app)
+            .get(`/api/reviews/${reviewId}/comments`)
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('Bad request')
+            
+            });
+        })
+        it('should respond with a custom 404 status if the request was good but the review_id doesn"t exist', () => {
+            const reviewId = '20'
+            return request(app)
+            .get(`/api/reviews/${reviewId}/comments`)
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toBe('review Id not found')
+            })
+        });
+        it('should ', () => {
+            
+        });
+
 })
 
 describe('PATCH request', () => {
@@ -239,4 +284,4 @@ describe('PATCH request', () => {
             
               
                 
-                
+})              

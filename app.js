@@ -1,6 +1,6 @@
 const express = require('express')
 
-const {getCategories, getReviewsById, getUsers, getAllReviews} = require('./controllers/games.get.controllers')
+const {getCategories, getReviewsById, getUsers, getAllReviews, getCommentsByID} = require('./controllers/games.get.controllers')
 const { patchReviewById } = require('./controllers/games.patch.controllers')
 
 const app = express()
@@ -13,6 +13,7 @@ app.get('/api/categories', getCategories)
 app.get('/api/reviews/:review_id', getReviewsById)
 app.get('/api/users', getUsers)
 app.get('/api/reviews', getAllReviews)
+app.get('/api/reviews/:review_id/comments', getCommentsByID)
 app.patch('/api/reviews/:review_id', patchReviewById)
 
 app.all('*', (req, res, next) => {
