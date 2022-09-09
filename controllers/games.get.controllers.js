@@ -1,5 +1,5 @@
 const app = require('../app')
-const {allCategories, reviewsById, allUsers} = require('../models/games.get.models')
+const {allCategories, reviewsById, allUsers, allReviews} = require('../models/games.get.models')
 
 
 const getCategories = (req, res, next) => {    
@@ -30,5 +30,15 @@ const getUsers = (req, res, next) => {
         next(err)
     })
 }
+const getAllReviews = (req, res, next) => {
+    const {category} = req.query
+    allReviews(category).then((reviews) => {
+        res.status(200).send({reviews})
+    })
+    .catch(err => {
+        next(err)
+    })
+}
 
-module.exports = {getCategories, getReviewsById, getUsers}
+
+module.exports = {getCategories, getReviewsById, getUsers, getAllReviews}

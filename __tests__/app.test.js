@@ -127,6 +127,35 @@ describe('GET requests', () => {
             })
         });
     })
+    describe('GET /api/reviews', () => {
+        it('should responds with 200 and an array of review objects sorted in date order', () => {
+            return request(app)
+            .get('/api/reviews')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.reviews).toBeSortedBy('created_at', {descending:true})
+            })            
+        });
+        it('should respond with 200 and a response object filtered by a passed category query', () => {
+            return request(app)
+            .get('/api/reviews?category=dexterity')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.reviews.length).toBe(1)
+                expect(body.reviews.every(review => review.category === 'dexterity')).toBe(true)
+
+            })
+        });
+        it('should respond with a custom 400 status if the request was good but the category doesn"t exist', () => {
+            return request(app)
+            .get('/api/reviews?category=bananas')
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('Oops that category doesn"t exist')
+            })
+        });
+        
+    })
 })
 
 describe('PATCH request', () => {

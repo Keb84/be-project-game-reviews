@@ -33,3 +33,31 @@ exports.allUsers = () => {
     })
     
 }
+
+exports.allReviews = (category) => {
+    
+
+        
+    let queryStr = `SELECT reviews.review_id, reviews.title, reviews.designer, reviews.owner, reviews.review_img_url, reviews.review_body, reviews.category, reviews.created_at, reviews.votes, COUNT(comments.review_id)::INT AS comment_count FROM reviews JOIN comments ON reviews.review_id = comments.review_id `;
+       
+    const queryValues = []
+
+    if (category){
+        queryStr += `WHERE category=$1 `;
+        queryValues.push(category)
+    }
+    queryStr += `GROUP BY reviews.review_id ORDER BY created_at DESC;`    
+    
+    return db.query(queryStr, queryValues).then((result) => {
+
+        if(result.rows.length === 0){
+            return Promise.reject({
+                status : 400,
+                msg: 'Oops that category doesn"t exist'
+            })
+        }
+        
+        return result.rows
+    })
+
+    }
