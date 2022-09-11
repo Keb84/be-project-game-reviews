@@ -42,7 +42,7 @@ const getAllReviews = (req, res, next) => {
 const getCommentsByID = (req, res, next) => {
     const reviewId = req.params.review_id    
     allComments(reviewId).then((comments) => {
-        console.log(reviewId, 'controller')
+        
         res.status(200).send({comments})  
     })
     .catch(err => {

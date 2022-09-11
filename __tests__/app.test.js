@@ -197,8 +197,13 @@ describe('GET requests', () => {
                 expect(body.msg).toBe('review Id not found')
             })
         });
-        it('should ', () => {
-            
+        it('should respond with 200 and an empty array when the review Id is valid but the are no instances for comments', () => {
+            return request(app)
+            .get('/api/reviews/4/comments')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.comments).toEqual([])
+            })
         });
 
 })
