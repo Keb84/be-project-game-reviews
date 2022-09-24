@@ -76,3 +76,36 @@ exports.allReviews = (category) =>   {
     })
 
     }
+exports.allComments = (review_id) => {
+ 
+    return db.query('SELECT reviews.review_id FROM reviews WHERE review_id = $1;', [review_id]).then((result) => {
+        const review = result.rows[0]
+               
+        if(!review){
+            return Promise.reject({
+                status : 404,
+                msg : 'review Id not found'
+            })
+        }else {
+            return review
+        }
+    }).then(()=> {       
+             
+        return db.query('SELECT * FROM comments WHERE review_id = $1;', [review_id]).then((result) => {
+            const review = result.rows
+            return review
+        })
+    })
+            
+        
+    }        
+    
+
+        
+            
+            
+        
+        
+        
+             
+    

@@ -180,7 +180,57 @@ describe('GET requests', () => {
         });
 
     })
-    
+
+    describe('GET /api/reviews/:review_id/comments', () => {
+        it('should respond with 200 and an array of comment objects ', () => {
+            return request(app)
+            .get('/api/reviews/3/comments')
+            .expect(200)
+            .then((res) => {
+                const comments = res.body.comments
+                
+                expect(Array.isArray(comments)).toBe(true)
+                expect(comments.length).toBe(3)
+                comments.forEach((comment) => {
+                    expect(comment).toHaveProperty('comment_id',expect.any(Number))
+                    expect(comment).toHaveProperty('votes', expect.any(Number))
+                    expect(comment).toHaveProperty('created_at', expect.any(String))
+                    expect(comment).toHaveProperty('author', expect.any(String))
+                    expect(comment).toHaveProperty('body', expect.any(String))
+                    expect(comment).toHaveProperty('review_id', expect.any(Number))
+                                       
+                })
+
+            })
+        });
+        it('should respond with status 400 : bad request', () => {
+            const reviewId = 'banana'
+            return request(app)
+            .get(`/api/reviews/${reviewId}/comments`)
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('Bad request')
+            
+            });
+        })
+        it('should respond with a custom 404 status if the request was good but the review_id doesn"t exist', () => {
+            const reviewId = '20'
+            return request(app)
+            .get(`/api/reviews/${reviewId}/comments`)
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toBe('review Id not found')
+            })
+        });
+        it('should respond with 200 and an empty array when the review Id is valid but the are no instances for comments', () => {
+            return request(app)
+            .get('/api/reviews/4/comments')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.comments).toEqual([])
+            })
+        });
+
 })
 
 describe('PATCH request', () => {
@@ -258,11 +308,106 @@ describe('PATCH request', () => {
         });
     })
 })
+
+
+describe('POST request', () => {
+    describe('POST /api/reviews/:review_id/comments', () => {
+       it('should respond with a 201 and the new posted comment', () => {
+        const postedComment = {
+            username : 'bainesface',
+            body : 'My cat loved this game too!'
+        }
+        return request(app)
+        .post('/api/reviews/3/comments')
+        .send(postedComment)
+        .expect(201)
+        .then(({body}) => {
+            expect(body.comment).toEqual({
+                author : 'bainesface',
+                body : 'My cat loved this game too!',
+                votes : 0,
+                comment_id : 7,
+                review_id : 3,
+                created_at : expect.any(String)
+            })
+        })
+       })
+       it('should respond with a 404 error when the review_id doesn"t exist', () => {
+        const postedComment = {
+            username : 'bainesface',
+            body : 'My cat loved this game too!'
+        }
+        return request(app)
+        .post('/api/reviews/20/comments')
+        .send(postedComment)
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('review Id not found')
+        })
+        
+       })
+       it('should respond with a 400 error if no comment is included in the post', () => {
+        return request(app)
+        .post('/api/reviews/3/comments')
+        .send({username : 'bainesface'})
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('You must include both a username and comment in your post')
+        })
+       })
+       it('should respond with a 400 error if no username is included in the post', () => {
+        return request(app)
+        .post('/api/reviews/3/comments')
+        .send({body : 'My cat loved this game too!'})
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('You must include both a username and comment in your post')
+        })
+       })
+       it('should respond with a 400 error if no username or comment is included in the post', () => {
+        return request(app)
+        .post('/api/reviews/3/comments')
+        .send({})
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('You must include both a username and comment in your post')
+        })
+       })
+       it('should respond with a 400 error when given a review_id that is not valid', () => {
+        const postedComment = {
+            username : 'bainesface',
+            body : 'My cat loved this game too!'
+        }
+        return request(app)
+        .post('/api/reviews/banana/comments')
+        .send(postedComment)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Bad request')
+        })
+       })
+       it('should respond with a 422 error when trying to post with a username that doesn"t exist', () => {
+        const postedComment = {
+            username : 'banana',
+            body : 'My cat loved this game too!'
+        }
+        return request(app)
+        .post('/api/reviews/3/comments')
+        .send(postedComment)
+        .expect(422)
+        .then(({body}) => {
+            expect(body.msg).toBe("Sorry that username doesn't exist")
+        })
+       });
+    })
+})
+})              
+
+
             
                
-                
+            
             
             
               
-                
                 
