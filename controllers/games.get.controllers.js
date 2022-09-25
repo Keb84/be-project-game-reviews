@@ -31,8 +31,8 @@ const getUsers = (req, res, next) => {
     })
 }
 const getAllReviews = (req, res, next) => {
-    const {category} = req.query
-    allReviews(category).then((reviews) => {
+    const {sort_by, order, category} = req.query
+    allReviews(sort_by, order, category).then((reviews) => {
         res.status(200).send({reviews})
     })
     .catch(err => {

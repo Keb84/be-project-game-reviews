@@ -133,8 +133,9 @@ describe('GET requests', () => {
             .get('/api/reviews')
             .expect(200)
             .then(({body}) => {
+                
                 expect(body.reviews).toBeSortedBy('created_at', {descending:true})
-                expect(body.reviews.length > 0).toBe(true)
+                expect(body.reviews.length).toBe(13)
                 body.reviews.forEach((review) => {
                     expect(review).toHaveProperty('review_id',expect.any(Number))
                     expect(review).toHaveProperty('title',expect.any(String))
@@ -156,6 +157,7 @@ describe('GET requests', () => {
             .get('/api/reviews?category=dexterity')
             .expect(200)
             .then(({body}) => {
+                
                 expect(body.reviews.length).toBe(1)
                 expect(body.reviews.every(review => review.category === 'dexterity')).toBe(true)
                 expect()
@@ -178,6 +180,66 @@ describe('GET requests', () => {
                 expect(body.reviews).toEqual([])
             })
         });
+        it('should respond with 200 and reviews sorted by date by default ', () => {
+            return request(app)
+            .get('/api/reviews')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.reviews).toBeSortedBy('created_at', {descending:true})
+            })
+        });
+        it('should respond with 200 and an array of reviews when passed a query of ascending order', () => {
+            return request(app)
+            .get('/api/reviews?order=asc')
+            .expect(200)
+            .then(({body})=> {
+                
+                expect(Array.isArray(body.reviews)).toBe(true);
+                expect(body.reviews[0]).toHaveProperty('title')
+                expect(body.reviews[0]).toHaveProperty('designer')
+                expect(body.reviews[0]).toHaveProperty('owner')
+                expect(body.reviews[0]).toHaveProperty('review_img_url')
+                expect(body.reviews[0]).toHaveProperty('category')
+                expect(body.reviews[0]).toHaveProperty('created_at')
+                expect(body.reviews[0]).toHaveProperty('votes')
+                expect(body.reviews[0]).toHaveProperty('comment_count')
+                expect(body.reviews).toBeSortedBy('created_at', {ascending : true})
+            })
+                       
+
+        })
+       it('should respond with 200 and a sorted array of all review votes by DESC when given a sort_by query', () => {
+        return request(app)
+        .get('/api/reviews?sort_by=votes')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.reviews).toBeSortedBy('votes', {descending:true})
+        })
+       });
+       it('should respond with 200 and a sorted array of all review comment_count by asc when given a sort_by and order query', () => {
+        return request(app)
+        .get('/api/reviews?sort_by=comment_count&order=ASC')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.reviews).toBeSortedBy('comment_count', {ascending:true})
+        })
+       });
+       it('should respond with a 400 when an invalid order query is passed ', () => {
+        return request(app)
+        .get(`/api/reviews?order=banana`)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Sorry cannot order by that query')
+        })
+       });
+       it('should respond with 400 when an invalid sort_by query is passed', () => {
+        return request(app)
+        .get(`/api/reviews?sort_by=bananas`)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Sorry cannot sort by by that query')
+        })
+       });
 
     })
 
@@ -399,6 +461,38 @@ describe('POST request', () => {
             expect(body.msg).toBe("Sorry that username doesn't exist")
         })
        });
+    })
+})
+describe('DELETE request', () => {
+    describe('DELETE /api/comments/:comment_id', () => {
+        it('should respond with 204 and remove the comment by comment_id', () => {
+            const comment_id = 2;
+            return request(app)
+            .delete(`/api/comments/${comment_id}`)
+            .expect(204)
+            .then(({body}) => {
+                expect(body).toEqual({})
+            })
+        });
+        it('should respond with 404 error when the comment_id doesn"t exist', () => {
+            const comment_id = 20
+            return request(app)
+            .delete(`/api/comments/${comment_id}`)
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toBe('Sorry that comment id doesn"t exist')
+            })
+        });
+        it('should respond with 400 error when the comment_id is invalid ', () => {
+            const comment_id = 'banana'
+            return request(app)
+            .delete(`/api/comments/${comment_id}`)
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('Bad request')
+            })
+        });
+
     })
 })
 })              
